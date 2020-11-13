@@ -114,6 +114,42 @@ const sendEvent = async function(queue, msg, opts = {}) {
   opts.debug && console.log('*'.repeat(100))
 }
 
+const log = ({app, level, at, body}) => {
+  return sendEvent('lastreduce', {
+    app,
+    level,
+    at,
+    body,
+  })
+}
+
+const getActions = (app, actions) => {
+  if (Array.isArray(actions)) {
+    return actions.length ? app + '.' + actions.join('.') : app
+  }
+  if (typeof actions === 'string') {
+    return actions ? app + '.' + actions : app
+  }
+}
+
+log.makeLogger = (app) => {
+  const level = (level, actions, msg) => {
+    return log({
+      level,
+      at: new Date(),
+      body: msg,
+      app: getActions(app, actions)
+    })
+  }
+  return {
+    level,
+    error: (...args) => level('error', ...args),
+    warn: (...args) => level('warn', ...args),
+    info: (...args) => level('info', ...args),
+    debug: (...args) => level('debug', ...args),
+  }
+}
+
 module.exports = {
   init: (url, amqp) => {
     locals.url = url
@@ -125,12 +161,5 @@ module.exports = {
       throw new Error('cant init without amqp! make require("amqp") in a project and send as second param')
     }
   },
-  log: ({app, level, at, body}) => {
-    return sendEvent('lastreduce', {
-      app,
-      level,
-      at,
-      body,
-    })
-  },
+  log
 }
