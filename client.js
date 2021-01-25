@@ -114,6 +114,14 @@ const sendEvent = async function(queue, msg, opts = {}) {
   opts.debug && console.log('*'.repeat(100))
 }
 
+/**
+ * universal log function
+ * @param {Object} params
+ * @param {String} params.app app name
+ * @param {String} params.level app log level
+ * @param {Datetime} params.at event datetime
+ * @param {String|Object|Array} params.body log body, if not String then convert to JSON (beware of circular data)
+ */
 const log = ({app, level, at, body}) => {
   return sendEvent('lastreduce', {
     app,
@@ -132,6 +140,16 @@ const getActions = (app, actions) => {
   }
 }
 
+/**
+ * 
+ * @param {String} app app name
+ * @returns {Object} log
+ * @returns {Function} log.level (level, actions, msg)
+ * @returns {Function} log.debug (actions, msg)
+ * @returns {Function} log.error (actions, msg)
+ * @returns {Function} log.warn (actions, msg)
+ * @returns {Function} log.info (actions, msg)
+ */
 log.makeLogger = (app) => {
   const level = (level, actions, msg) => {
     return log({
@@ -150,16 +168,24 @@ log.makeLogger = (app) => {
   }
 }
 
+/**
+ * 
+ * @param {String} url 
+ * @param {Object} amqp amqplib module
+ */
+const init = (url, amqp) => {
+  locals.url = url
+  locals.amqp = amqp
+  if (!url) {
+    throw new Error('cant init with empty rmq url!')
+  }
+  if (!amqp) {
+    throw new Error('cant init without amqp! make require("amqp") in a project and send as second param')
+  }
+}
+
+
 module.exports = {
-  init: (url, amqp) => {
-    locals.url = url
-    locals.amqp = amqp
-    if (!url) {
-      throw new Error('cant init with empty rmq url!')
-    }
-    if (!amqp) {
-      throw new Error('cant init without amqp! make require("amqp") in a project and send as second param')
-    }
-  },
+  init,
   log
 }
