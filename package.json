@@ -4,7 +4,8 @@
   "description": "",
   "main": "client.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "up": "git add . && git commit -m'up' && npm version patch && git push"
   },
   "repository": {
     "type": "git",
