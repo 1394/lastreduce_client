@@ -1,6 +1,6 @@
 {
   "name": "lastreduce_client",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "client.js",
   "scripts": {
@@ -15,6 +15,5 @@
   "author": "dmitri.leto",
   "email": "leto1394@gmail.com",
   "license": "ISC",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
